@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* 1. Map the font-sans to your Poppins variable from layout.tsx */
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /* 2. Map Brand Colors */
+  --color-brand-purple: #8B19E6;
+  --color-brand-light: #F6E8FF;
+  --color-brand-dark: #0A1F44;
+
+  /* 3. Custom Radius */
+  --radius-4xl: 2rem;
+  --radius-5xl: 3rem;
+}
+
+/* 4. Reset and Base Styles */
+@layer base {
+  /* This part is CRITICAL to fix the gap */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden; /* Prevents the horizontal scroll gap */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :root {
+    --background: #F8F9FE;
+    --foreground: #1A1A1A;
+  }
+
+  body {
+    /* Using @apply to set the default page background to your light gray */
+    @apply bg-[#F8F9FE] text-[#1A1A1A];
+    font-family: var(--font-poppins), sans-serif;
+  }
+}
+
+/* 5. Utility for Full-Width Sections */
+@layer utilities {
+  .full-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+}
