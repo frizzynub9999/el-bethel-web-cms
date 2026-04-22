@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   description: "A community of faith, hope, and love, dedicated to transforming lives.",
 };
 
+// CMS content should reflect Sanity Studio changes on the live site without waiting for a rebuild.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
