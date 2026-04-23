@@ -1,20 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { Mail, Phone, MapPin, Send, Globe, Instagram, Facebook } from "lucide-react";
+import { Mail, Phone, MapPin, Navigation, HeartHandshake } from "lucide-react";
 import { SiteSettings } from "@/sanity/lib/site-settings";
 
 export default function ContactPageClient({ settings }: { settings: SiteSettings }) {
-  const [pending, setPending] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPending(true);
-    setTimeout(() => {
-      setPending(false);
-      alert("Message sent! We will get back to you shortly.");
-    }, 1500);
-  };
+  const phoneHref = `tel:${settings.phone.replace(/[^\d+]/g, "")}`;
+  const emailHref = `mailto:${settings.email}`;
+  const googleMapsHref = "https://maps.app.goo.gl/cMdPk4VbCEEf15KPA";
+  const prayerEmailHref = `mailto:${settings.email}?subject=${encodeURIComponent(
+    "Prayer Request"
+  )}`;
+  const mapEmbedSrc = `https://www.google.com/maps?q=${encodeURIComponent(
+    settings.address
+  )}&output=embed`;
 
   return (
     <main className="min-h-screen bg-white pb-20">
@@ -56,10 +54,21 @@ export default function ContactPageClient({ settings }: { settings: SiteSettings
                 </div>
               </div>
 
-              <div className="mt-12 pt-8 border-t border-white/10 flex gap-4">
-                <button className="bg-white/10 p-4 rounded-2xl hover:bg-[#8B19E6] transition-all"><Instagram size={20} /></button>
-                <button className="bg-white/10 p-4 rounded-2xl hover:bg-[#8B19E6] transition-all"><Facebook size={20} /></button>
-                <button className="bg-white/10 p-4 rounded-2xl hover:bg-[#8B19E6] transition-all"><Globe size={20} /></button>
+              <div className="mt-12 grid gap-3 border-t border-white/10 pt-8">
+                <a
+                  href={phoneHref}
+                  className="rounded-2xl bg-white/10 px-5 py-4 text-center text-sm font-black uppercase tracking-widest transition-all hover:bg-[#8B19E6]"
+                >
+                  Call Us
+                </a>
+                <a
+                  href={googleMapsHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-2xl bg-white/10 px-5 py-4 text-center text-sm font-black uppercase tracking-widest transition-all hover:bg-[#8B19E6]"
+                >
+                  Get Directions
+                </a>
               </div>
             </div>
           </div>
@@ -67,61 +76,61 @@ export default function ContactPageClient({ settings }: { settings: SiteSettings
           <div className="lg:col-span-2">
             <div className="bg-white rounded-[40px] p-8 md:p-16 border border-gray-100 shadow-sm">
               <div className="mb-12">
-                <h2 className="text-4xl font-black text-gray-900 uppercase italic tracking-tighter mb-4">Send a Message</h2>
+                <h2 className="text-4xl font-black text-gray-900 uppercase italic tracking-tighter mb-4">Reach Out Directly</h2>
                 <p className="text-gray-500 font-medium">
-                  Have a prayer request or a question about {settings.churchShortName}? Fill out the form below.
+                  Have a prayer request or a question about {settings.churchShortName}? Use one of the options below and your message will go through your phone or email app.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 font-bold focus:ring-2 focus:ring-[#8B19E6] transition-all"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 font-bold focus:ring-2 focus:ring-[#8B19E6] transition-all"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Subject</label>
-                  <select className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 font-bold focus:ring-2 focus:ring-[#8B19E6] transition-all appearance-none">
-                    <option>General Inquiry</option>
-                    <option>Prayer Request</option>
-                    <option>Volunteer Opportunity</option>
-                    <option>Media/Press</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Your Message</label>
-                  <textarea
-                    rows={5}
-                    required
-                    className="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 font-bold focus:ring-2 focus:ring-[#8B19E6] transition-all"
-                    placeholder="How can we help you today?"
-                  />
-                </div>
-
-                <button
-                  disabled={pending}
-                  className="w-full md:w-auto bg-[#8B19E6] text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3"
+              <div className="grid gap-5 md:grid-cols-2">
+                <a
+                  href={phoneHref}
+                  className="group rounded-[28px] border border-gray-100 bg-gray-50 p-8 transition-all hover:border-[#8B19E6] hover:bg-purple-50"
                 >
-                  {pending ? "Sending..." : <>Send Message <Send size={20} /></>}
-                </button>
-              </form>
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B19E6] text-white">
+                    <Phone size={26} />
+                  </div>
+                  <h3 className="text-2xl font-black uppercase italic text-gray-950">Call Us</h3>
+                  <p className="mt-3 text-sm font-bold leading-6 text-gray-500">{settings.phone}</p>
+                </a>
+
+                <a
+                  href={emailHref}
+                  className="group rounded-[28px] border border-gray-100 bg-gray-50 p-8 transition-all hover:border-[#8B19E6] hover:bg-purple-50"
+                >
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B19E6] text-white">
+                    <Mail size={26} />
+                  </div>
+                  <h3 className="text-2xl font-black uppercase italic text-gray-950">Email Us</h3>
+                  <p className="mt-3 break-all text-sm font-bold leading-6 text-gray-500">{settings.email}</p>
+                </a>
+
+                <a
+                  href={googleMapsHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group rounded-[28px] border border-gray-100 bg-gray-50 p-8 transition-all hover:border-[#8B19E6] hover:bg-purple-50"
+                >
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B19E6] text-white">
+                    <Navigation size={26} />
+                  </div>
+                  <h3 className="text-2xl font-black uppercase italic text-gray-950">Get Directions</h3>
+                  <p className="mt-3 text-sm font-bold leading-6 text-gray-500">{settings.address}</p>
+                </a>
+
+                <a
+                  href={prayerEmailHref}
+                  className="group rounded-[28px] border border-gray-100 bg-gray-50 p-8 transition-all hover:border-[#8B19E6] hover:bg-purple-50"
+                >
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#8B19E6] text-white">
+                    <HeartHandshake size={26} />
+                  </div>
+                  <h3 className="text-2xl font-black uppercase italic text-gray-950">Prayer Request</h3>
+                  <p className="mt-3 text-sm font-bold leading-6 text-gray-500">
+                    Send a prayer request directly to the church email.
+                  </p>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -134,14 +143,31 @@ export default function ContactPageClient({ settings }: { settings: SiteSettings
             We&apos;re located in the heart of the community
           </p>
         </div>
-        <div className="bg-gray-100 h-[400px] rounded-[40px] flex items-center justify-center text-gray-400 font-bold overflow-hidden relative">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1200')] bg-cover bg-center grayscale opacity-20" />
-          <div className="relative z-10 text-center">
-            <div className="bg-white p-6 rounded-3xl shadow-2xl inline-block mb-4 text-[#8B19E6]">
-              <MapPin size={40} />
+        <div className="overflow-hidden rounded-[40px] border border-gray-100 bg-gray-100 shadow-sm">
+          <iframe
+            src={mapEmbedSrc}
+            title={`${settings.churchShortName} location map`}
+            className="h-[420px] w-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <div className="flex flex-col items-start justify-between gap-4 bg-white p-6 md:flex-row md:items-center">
+            <div>
+              <h4 className="text-xl font-black uppercase italic text-gray-950">
+                {settings.churchShortName}
+              </h4>
+              <p className="mt-1 text-sm font-semibold leading-6 text-gray-500">
+                {settings.address}
+              </p>
             </div>
-            <h4 className="text-black text-xl font-black uppercase italic">{settings.churchShortName}</h4>
-            <p className="text-gray-600">{settings.address}</p>
+            <a
+              href={googleMapsHref}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl bg-[#8B19E6] px-6 py-4 text-sm font-black uppercase tracking-widest text-white transition-colors hover:bg-[#7a16cc]"
+            >
+              Open in Google Maps
+            </a>
           </div>
         </div>
       </section>

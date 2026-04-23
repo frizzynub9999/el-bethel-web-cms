@@ -27,12 +27,18 @@ export default async function Home() {
           </p>
 
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-            <button className="w-48 bg-[#8B19E6] text-white py-4 rounded-2xl font-bold text-lg shadow-2xl hover:bg-[#7a16cc] transition-all">
+            <Link
+              href="/about"
+              className="w-48 bg-[#8B19E6] text-white py-4 rounded-2xl font-bold text-lg shadow-2xl hover:bg-[#7a16cc] transition-all"
+            >
               Learn More
-            </button>
-            <button className="w-48 bg-white text-gray-900 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:bg-gray-100 transition-all">
+            </Link>
+            <Link
+              href="/events"
+              className="w-48 bg-white text-gray-900 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:bg-gray-100 transition-all"
+            >
               View Events
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -151,7 +157,11 @@ export default async function Home() {
           </div>
 
           <div className="flex flex-col md:flex-row overflow-hidden rounded-[40px] shadow-2xl min-h-[550px]">
-            <div className="relative w-full md:w-1/2 group cursor-pointer overflow-hidden">
+            <Link
+              href="/sermons"
+              className="relative w-full md:w-1/2 group cursor-pointer overflow-hidden"
+              aria-label="View sermons"
+            >
               <img
                 src={data.latestSermon.thumbnail}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -167,7 +177,7 @@ export default async function Home() {
                   </svg>
                 </div>
               </div>
-            </div>
+            </Link>
 
             <div className="w-full md:w-1/2 bg-[#8B19E6] p-12 md:p-20 flex flex-col justify-center text-white">
               <span className="text-xs font-bold uppercase tracking-[0.25em] text-white/70 mb-6">
@@ -349,12 +359,18 @@ export default async function Home() {
             We&apos;d love to meet you! Join us this Sunday and experience a welcoming community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-[#8B19E6] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-colors shadow-lg">
+            <Link
+              href="/contact"
+              className="bg-white text-[#8B19E6] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-colors shadow-lg"
+            >
               Plan Your Visit
-            </button>
-            <button className="border-2 border-white/30 bg-white/10 backdrop-blur-sm px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-colors">
+            </Link>
+            <Link
+              href="/giving"
+              className="border-2 border-white/30 bg-white/10 backdrop-blur-sm px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-colors"
+            >
               Give Online
-            </button>
+            </Link>
           </div>
         </div>
       </section>
