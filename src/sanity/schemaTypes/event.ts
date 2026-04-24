@@ -49,6 +49,27 @@ export const eventType = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "sendNotification",
+      title: "Send notification to subscribers",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Turn this on only when the event details are final. A webhook will send one email blast and then reset this field.",
+    }),
+    defineField({
+      name: "notificationSent",
+      title: "Notification Sent",
+      type: "boolean",
+      initialValue: false,
+      readOnly: true,
+    }),
+    defineField({
+      name: "notificationSentAt",
+      title: "Notification Sent At",
+      type: "datetime",
+      readOnly: true,
+    }),
   ],
   orderings: [
     {

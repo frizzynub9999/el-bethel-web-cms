@@ -35,6 +35,27 @@ export const announcementType = defineType({
       type: "boolean",
       initialValue: true,
     }),
+    defineField({
+      name: "sendNotification",
+      title: "Send notification to subscribers",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Turn this on only when the announcement is ready. A webhook will send one email blast and then reset this field.",
+    }),
+    defineField({
+      name: "notificationSent",
+      title: "Notification Sent",
+      type: "boolean",
+      initialValue: false,
+      readOnly: true,
+    }),
+    defineField({
+      name: "notificationSentAt",
+      title: "Notification Sent At",
+      type: "datetime",
+      readOnly: true,
+    }),
   ],
   orderings: [
     {

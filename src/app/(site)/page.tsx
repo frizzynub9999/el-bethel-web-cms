@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getHomePageData } from "@/sanity/lib/home-page";
+import UpdatesSubscribeCard from "./components/updates-subscribe-card";
 
 export default async function Home() {
   const data = await getHomePageData();
@@ -320,18 +321,21 @@ export default async function Home() {
             ))}
           </div>
         ) : (
-          <div className="mx-auto max-w-3xl rounded-[32px] border border-gray-100 bg-white px-8 py-14 text-center shadow-sm">
-            <h3 className="text-2xl font-black text-[#0A1F44]">
-              No upcoming events yet
-            </h3>
-            <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-7 text-gray-500">
-              Check the{" "}
-              <Link href="/events" className="font-bold text-[#8B19E6] hover:underline">
-                Events page
-              </Link>{" "}
-              for more details and future updates.
-            </p>
-          </div>
+          <>
+            <div className="mx-auto max-w-3xl rounded-[32px] border border-gray-100 bg-white px-8 py-14 text-center shadow-sm">
+              <h3 className="text-2xl font-black text-[#0A1F44]">
+                No upcoming events yet
+              </h3>
+              <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-7 text-gray-500">
+                Check the{" "}
+                <Link href="/events" className="font-bold text-[#8B19E6] hover:underline">
+                  Events page
+                </Link>{" "}
+                for more details and future updates.
+              </p>
+            </div>
+            <UpdatesSubscribeCard />
+          </>
         )}
       </section>
 
