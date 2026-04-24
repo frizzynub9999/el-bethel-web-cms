@@ -73,11 +73,11 @@ export default async function Home() {
           We can&apos;t wait to worship with you!
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {data.weeklySchedule.map((item, index) => (
             <div
               key={`${item.title}-${index}`}
-              className="bg-white p-10 rounded-[40px] shadow-sm hover:shadow-xl transition-all border border-gray-50 flex flex-col items-center"
+              className="w-full max-w-[420px] bg-white p-10 rounded-[40px] shadow-sm hover:shadow-xl transition-all border border-gray-50 flex flex-col items-center md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]"
             >
               <div className="w-16 h-16 bg-[#F6E8FF] rounded-full flex items-center justify-center mb-6 text-[#8B19E6]">
                 <svg

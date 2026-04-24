@@ -1,9 +1,29 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { getAboutPageData, iconMap } from "@/sanity/lib/about-page";
+import { MissionGalleryCarousel } from "./mission-gallery-carousel";
 
 export default async function AboutPage() {
   const data = await getAboutPageData();
+  const missionGalleryImages =
+    data.missionGallery.length > 0
+      ? data.missionGallery
+      : [
+          {
+            image: data.storyImage,
+            alt: "Church story image",
+            label: "Story",
+            title: "A glimpse of our church family",
+            description: "A featured moment from the life of the church.",
+          },
+          ...data.leadership.slice(0, 2).map((leader) => ({
+            image: leader.img,
+            alt: leader.name,
+            label: "Leadership",
+            title: leader.role,
+            description: leader.bio,
+          })),
+        ];
 
   return (
     <main className="w-full bg-white">
@@ -67,6 +87,24 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      <section className="bg-white px-6 py-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-10 text-center">
+            <p className="mb-3 text-sm font-black uppercase tracking-[0.35em] text-[#8B19E6]">
+              Mission In Motion
+            </p>
+            <h2 className="mb-4 text-4xl font-black text-[#0A1F44] md:text-5xl">
+              A glimpse of our church family
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-500">
+              Worship, care, and community are at the heart of who we are.
+            </p>
+          </div>
+
+          <MissionGalleryCarousel images={missionGalleryImages} />
+        </div>
+      </section>
+
       <section className="bg-white py-24 px-6">
         <div className="max-w-7xl mx-auto text-center mb-16">
           <h2 className="text-[#0A1F44] text-4xl font-black mb-4">Our Core Values</h2>
@@ -97,9 +135,9 @@ export default async function AboutPage() {
           <h2 className="text-[#0A1F44] text-4xl font-black mb-4">Our Leadership Team</h2>
           <p className="text-gray-500 text-lg">Shepherds dedicated to serving God&apos;s people</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {data.leadership.map((leader, index) => (
-            <div key={index} className="group text-center">
+            <div key={index} className="group w-full max-w-[300px] text-center">
               <div className="w-full aspect-[4/5] rounded-[40px] overflow-hidden mb-6 shadow-lg">
                 <img
                   src={leader.img}

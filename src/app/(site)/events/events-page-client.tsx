@@ -202,11 +202,11 @@ export default function EventsPageClient({
             Regular events happening every week
           </p>
         </div>
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
           {weeklySchedule.map((item, index) => (
             <div
               key={index}
-              className="bg-[#8B19E6] rounded-[32px] p-8 text-white text-center flex flex-col items-center hover:scale-105 transition-transform duration-300 shadow-lg"
+              className="w-full max-w-[360px] bg-[#8B19E6] rounded-[32px] p-8 text-white text-center flex flex-col items-center hover:scale-105 transition-transform duration-300 shadow-lg sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
             >
               <div className="bg-white/20 p-4 rounded-full mb-6">
                 <Calendar size={32} strokeWidth={2.5} />

@@ -51,6 +51,57 @@ export const aboutPageType = defineType({
       rows: 5,
     }),
     defineField({
+      name: "missionGallery",
+      title: "Mission Gallery",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+            }),
+            defineField({
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+            }),
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "string",
+              description: "Short uppercase label like Worship or Community",
+            }),
+            defineField({
+              name: "title",
+              title: "Title",
+              type: "string",
+            }),
+            defineField({
+              name: "description",
+              title: "Description",
+              type: "text",
+              rows: 3,
+            }),
+          ],
+          preview: {
+            select: {
+              title: "title",
+              subtitle: "label",
+              media: "image",
+            },
+          },
+        }),
+      ],
+      options: {
+        layout: "grid",
+      },
+      validation: (rule) => rule.max(5),
+    }),
+    defineField({
       name: "visionTitle",
       title: "Vision Title",
       type: "string",

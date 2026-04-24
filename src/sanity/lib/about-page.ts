@@ -51,6 +51,14 @@ export type AboutBelief = {
   text: string;
 };
 
+export type AboutGalleryItem = {
+  image: string;
+  alt: string;
+  label: string;
+  title: string;
+  description: string;
+};
+
 export type AboutPageData = {
   heroTitle: string;
   heroSubtitle: string;
@@ -60,6 +68,7 @@ export type AboutPageData = {
   storyImage: string;
   missionTitle: string;
   missionText: string;
+  missionGallery: AboutGalleryItem[];
   visionTitle: string;
   visionText: string;
   values: AboutItem[];
@@ -94,6 +103,32 @@ export const defaultAboutPageData: AboutPageData = {
   missionTitle: "Our Mission",
   missionText:
     "To make disciples of all nations by sharing the transformative message of Jesus Christ, equipping believers for effective ministry, and serving our community with excellence and compassion. We exist to help people know God, find freedom, discover purpose, and make a difference.",
+  missionGallery: [
+    {
+      image: "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?q=80&w=1200&auto=format&fit=crop",
+      alt: "Church fellowship during ministry",
+      label: "Worship",
+      title: "A house filled with praise and presence",
+      description:
+        "Gathering together in praise, reflection, and shared devotion as a church family.",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?q=80&w=1200&auto=format&fit=crop",
+      alt: "Church leadership serving the congregation",
+      label: "Care",
+      title: "Serving people with leadership, prayer, and love",
+      description:
+        "Walking with people through ministry, guidance, prayer, and faithful pastoral care.",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=1200&auto=format&fit=crop",
+      alt: "Church family gathered together",
+      label: "Community",
+      title: "Growing together as one church family",
+      description:
+        "Building belonging through friendship, encouragement, and life shared in Christ.",
+    },
+  ],
   visionTitle: "Our Vision",
   visionText:
     "To be a Christ-centered, Spirit-empowered, mission-focused church that transforms lives, strengthens families, and impacts our world. We envision a community where every person experiences authentic worship, genuine relationships, and purposeful service, resulting in a global harvest of souls for the Kingdom of God.",
@@ -201,6 +236,13 @@ const aboutPageQuery = `*[_type == "aboutPage"][0]{
   "storyImage": storyImage.asset->url,
   missionTitle,
   missionText,
+  missionGallery[]{
+    "image": image.asset->url,
+    alt,
+    label,
+    title,
+    description
+  },
   visionTitle,
   visionText,
   values[]{
@@ -263,6 +305,20 @@ export async function getAboutPageData() {
         data.contactButtonText || defaultAboutPageData.contactButtonText,
       heroImage: data.heroImage || defaultAboutPageData.heroImage,
       storyImage: data.storyImage || defaultAboutPageData.storyImage,
+      missionGallery:
+        data.missionGallery && data.missionGallery.length > 0
+          ? data.missionGallery.map((item, index) => ({
+              ...defaultAboutPageData.missionGallery[
+                Math.min(index, defaultAboutPageData.missionGallery.length - 1)
+              ],
+              ...item,
+              image:
+                item.image ||
+                defaultAboutPageData.missionGallery[
+                  Math.min(index, defaultAboutPageData.missionGallery.length - 1)
+                ].image,
+            }))
+          : defaultAboutPageData.missionGallery,
       storyParagraphs:
         data.storyParagraphs && data.storyParagraphs.length > 0
           ? data.storyParagraphs
