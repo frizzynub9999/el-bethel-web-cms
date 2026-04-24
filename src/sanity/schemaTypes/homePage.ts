@@ -18,6 +18,12 @@ export const homePageType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "heroSubtitle",
+      title: "Hero Subtitle",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
       name: "heroImage",
       title: "Hero Image",
       type: "image",
@@ -44,11 +50,18 @@ export const homePageType = defineType({
               rows: 3,
             }),
             defineField({
+              name: "image",
+              title: "Background Image",
+              type: "image",
+              options: { hotspot: true },
+              description: "Shown as the ministry card background on the Home page.",
+            }),
+            defineField({
               name: "icon",
               title: "SVG Path Icon",
               type: "text",
               rows: 2,
-              description: "Paste the SVG path used for the ministry icon.",
+              description: "Legacy icon field. Kept for older ministry card layouts.",
             }),
           ],
           preview: {
