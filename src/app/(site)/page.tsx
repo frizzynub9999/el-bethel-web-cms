@@ -3,6 +3,13 @@ import { getHomePageData } from "@/sanity/lib/home-page";
 
 export default async function Home() {
   const data = await getHomePageData();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcomingEvents = data.events.filter((event) => {
+    const eventDate = new Date(`${event.rawDate}T00:00:00`);
+    return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
+  });
 
   return (
     <main className="w-full">
@@ -233,79 +240,101 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
-          {data.events.map((event, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group"
-            >
-              <div className="bg-[#8B19E6] p-10 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/10 scale-150 group-hover:scale-110 transition-transform duration-500 rounded-full translate-y-8" />
-                <div className="relative z-10 w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 backdrop-blur-sm">
-                  <svg
-                    className="w-10 h-10 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+        {upcomingEvents.length > 0 ? (
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
+            {upcomingEvents.map((event, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 group"
+              >
+                <div className="relative h-48 overflow-hidden bg-[#8B19E6]">
+                  <img
+                    src={event.image}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    alt={event.title}
+                  />
+                  <div className="absolute inset-0 bg-black/20" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative z-10 w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 backdrop-blur-sm">
+                      <svg
+                        className="w-10 h-10 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-xl font-bold text-[#0A1F44] mb-6 min-h-[56px] flex items-center">
+                    {event.title}
+                  </h3>
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
+                      <svg
+                        className="w-4 h-4 text-[#8B19E6]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {event.day}, {event.date}
+                    </div>
+                    <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
+                      <svg
+                        className="w-4 h-4 text-[#8B19E6]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {event.time}
+                    </div>
+                    <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
+                      <svg
+                        className="w-4 h-4 text-[#8B19E6]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      </svg>
+                      {event.loc}
+                    </div>
+                  </div>
+                  <Link
+                    href={`/events/${event.id}`}
+                    className="block w-full py-4 bg-[#8B19E6] text-white text-center font-bold rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-md"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
+                    Learn More
+                  </Link>
                 </div>
               </div>
-              <div className="p-8">
-                <h3 className="text-xl font-bold text-[#0A1F44] mb-6 min-h-[56px] flex items-center">
-                  {event.title}
-                </h3>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
-                    <svg
-                      className="w-4 h-4 text-[#8B19E6]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {event.date}
-                  </div>
-                  <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
-                    <svg
-                      className="w-4 h-4 text-[#8B19E6]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {event.time}
-                  </div>
-                  <div className="flex items-center gap-3 text-gray-500 font-medium text-sm">
-                    <svg
-                      className="w-4 h-4 text-[#8B19E6]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    </svg>
-                    {event.loc}
-                  </div>
-                </div>
-                <Link
-                  href={`/events/${event.id}`}
-                  className="block w-full py-4 bg-[#8B19E6] text-white text-center font-bold rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-md"
-                >
-                  Learn More
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto max-w-3xl rounded-[32px] border border-gray-100 bg-white px-8 py-14 text-center shadow-sm">
+            <h3 className="text-2xl font-black text-[#0A1F44]">
+              No upcoming events yet
+            </h3>
+            <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-7 text-gray-500">
+              Check the{" "}
+              <Link href="/events" className="font-bold text-[#8B19E6] hover:underline">
+                Events page
+              </Link>{" "}
+              for more details and future updates.
+            </p>
+          </div>
+        )}
       </section>
 
       <section className="py-24 bg-white px-6 max-w-7xl mx-auto">

@@ -23,8 +23,11 @@ export type HomePageData = {
     id: string;
     title: string;
     date: string;
+    rawDate: string;
+    day: string;
     time: string;
     loc: string;
+    image: string;
   }>;
   ministries: Array<{
     title: string;
@@ -60,22 +63,31 @@ export const defaultHomePageData: HomePageData = {
       id: "1",
       title: "Easter Sunday Celebration",
       date: "March 31, 2026",
+      rawDate: "2026-03-31",
+      day: "Tuesday",
       time: "9:00 AM",
       loc: "Main Sanctuary",
+      image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200",
     },
     {
       id: "2",
       title: "Youth Conference 2026",
       date: "April 12-14, 2026",
+      rawDate: "2026-04-12",
+      day: "Sunday",
       time: "All Day",
       loc: "Conference Center",
+      image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200",
     },
     {
       id: "3",
       title: "Community Outreach",
       date: "April 20, 2026",
+      rawDate: "2026-04-20",
+      day: "Monday",
       time: "10:00 AM",
       loc: "City Park",
+      image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200",
     },
   ],
   ministries: [
@@ -155,8 +167,11 @@ export async function getHomePageData() {
               id: event.id,
               title: event.title,
               date: event.date,
+              rawDate: event.rawDate,
+              day: event.day,
               time: event.time,
               loc: event.location,
+              image: event.image,
             }))
           : defaultHomePageData.events,
       ministries:

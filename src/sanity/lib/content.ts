@@ -70,6 +70,9 @@ type MetaVideoResponse = {
 const metaVideoFields =
   "id,title,description,created_time,permalink_url,length,picture,thumbnails";
 
+export const defaultEventImage =
+  "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200";
+
 export const defaultAnnouncements: AnnouncementItem[] = [
   {
     id: "1",
@@ -90,7 +93,7 @@ export const defaultEvents: EventItem[] = [
     time: "6:00 PM - 8:30 PM",
     location: "Main Sanctuary",
     category: "Youth",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800",
+    image: defaultEventImage,
     featured: true,
   },
   {
@@ -102,7 +105,7 @@ export const defaultEvents: EventItem[] = [
     time: "10:00 AM",
     location: "Downtown Plaza",
     category: "Outreach",
-    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800",
+    image: defaultEventImage,
     featured: false,
   },
   {
@@ -114,7 +117,7 @@ export const defaultEvents: EventItem[] = [
     time: "7:30 PM",
     location: "Chapel",
     category: "Worship",
-    image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=800",
+    image: defaultEventImage,
     featured: false,
   },
 ];
@@ -241,6 +244,17 @@ function formatEventDate(value: string) {
     .format(date)
     .replace(" ", " ")
     .toUpperCase();
+}
+
+function formatEventDay(value: string) {
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+  }).format(date);
 }
 
 function formatSermonDate(value: string) {
@@ -412,7 +426,11 @@ export async function getEvents() {
       id: event.id || `${index + 1}`,
       date: event.date ? formatEventDate(event.date) : defaultEvents[0].date,
       rawDate: event.rawDate || event.date || defaultEvents[0].rawDate,
-      image: event.image || defaultEvents[0].image,
+      day:
+        event.day ||
+        formatEventDay(event.rawDate || event.date || defaultEvents[0].rawDate) ||
+        defaultEvents[Math.min(index, defaultEvents.length - 1)].day,
+      image: event.image || defaultEventImage,
       featured: Boolean(event.featured),
     }));
   } catch {
