@@ -18,6 +18,18 @@ export default function EventsPageClient({
 }: EventsPageClientProps) {
   const [filter, setFilter] = useState("All");
 
+  const isUpcomingEvent = (rawDate: string) => {
+    const eventDate = new Date(`${rawDate}T00:00:00`);
+    if (Number.isNaN(eventDate.getTime())) {
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return eventDate >= today;
+  };
+
   const categories = useMemo(() => {
     const dynamicCategories = Array.from(
       new Set(events.map((event) => event.category).filter(Boolean))
@@ -27,17 +39,26 @@ export default function EventsPageClient({
   }, [events]);
 
   const filteredEvents = useMemo(() => {
-    if (filter === "All") {
-      return events;
-    }
+    const categoryFiltered =
+      filter === "All" ? events : events.filter((event) => event.category === filter);
 
-    return events.filter((event) => event.category === filter);
+    const upcoming = categoryFiltered.filter((event) => isUpcomingEvent(event.rawDate));
+    const past = categoryFiltered.filter((event) => !isUpcomingEvent(event.rawDate));
+
+    return { upcoming, past };
   }, [events, filter]);
 
-  const featuredEvent = filteredEvents.find((event) => event.featured) || filteredEvents[0];
-  const remainingEvents = filteredEvents.filter((event) => event.id !== featuredEvent?.id);
-  const featuredBadgeText =
-    filter === "All" ? "Featured Event" : featuredEvent?.category || "Featured Event";
+  const featuredEvent =
+    filteredEvents.upcoming.find((event) => event.featured) || filteredEvents.upcoming[0];
+  const remainingEvents = [
+    ...filteredEvents.upcoming.filter((event) => event.id !== featuredEvent?.id),
+    ...filteredEvents.past,
+  ];
+  const featuredBadgeText = featuredEvent?.featured
+    ? filter === "All"
+      ? "Featured Event"
+      : featuredEvent?.category || "Featured Event"
+    : "Upcoming Event";
 
   return (
     <main className="min-h-screen bg-white pb-20">
@@ -142,7 +163,18 @@ export default function EventsPageClient({
             </div>
           </div>
         </section>
-      ) : null}
+      ) : (
+        <section className="max-w-7xl mx-auto px-6 pt-12">
+          <div className="rounded-[40px] border border-gray-200 bg-white px-10 py-12 text-center shadow-sm">
+            <h2 className="text-3xl font-black text-gray-900">
+              No upcoming events yet
+            </h2>
+            <p className="mt-4 text-lg font-medium text-gray-500">
+              Check back soon for future updates and church activities.
+            </p>
+          </div>
+        </section>
+      )}
 
       <section className="max-w-7xl mx-auto px-6 pt-24 pb-12">
         <h2 className="text-3xl font-black text-gray-900 uppercase italic mb-10 tracking-tight">
