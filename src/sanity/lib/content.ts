@@ -67,6 +67,7 @@ type MetaVideoResponse = {
   };
 };
 
+const MIN_SERMON_DURATION_MINUTES = 20;
 const metaVideoFields =
   "id,title,description,created_time,permalink_url,length,picture,thumbnails";
 
@@ -297,6 +298,30 @@ function pickSermonDuration(seconds: number | undefined) {
   return `${minutes} min`;
 }
 
+function parseDurationMinutes(value: string | undefined) {
+  if (!value) {
+    return 0;
+  }
+
+  const normalized = value.toLowerCase();
+  const hourMatch = normalized.match(/(\d+)\s*h/);
+  const minuteMatch = normalized.match(/(\d+)\s*m/);
+
+  const hours = hourMatch ? Number(hourMatch[1]) : 0;
+  const minutes = minuteMatch ? Number(minuteMatch[1]) : 0;
+
+  if (hours || minutes) {
+    return hours * 60 + minutes;
+  }
+
+  const numberMatch = normalized.match(/(\d+)/);
+  return numberMatch ? Number(numberMatch[1]) : 0;
+}
+
+function isLongFormSermon(duration: string | undefined) {
+  return parseDurationMinutes(duration) >= MIN_SERMON_DURATION_MINUTES;
+}
+
 function pickSermonThumbnail(video: MetaVideo) {
   return (
     video.thumbnails?.data?.find((thumbnail) => thumbnail.uri)?.uri ||
@@ -357,20 +382,28 @@ async function getFacebookSermons() {
       return null;
     }
 
-    return videos.map((video, index) => ({
-      id: video.id,
-      title: pickSermonTitle(video, index),
-      speaker: "EL Bethel Global Harvest Church",
-      date: video.created_time ? formatSermonDate(video.created_time) : defaultSermons[0].date,
-      duration: pickSermonDuration(video.length),
-      series: "Facebook Sermons",
-      description: stripHtml(video.description || defaultSermons[0].description),
-      thumbnail: pickSermonThumbnail(video),
-      videoUrl: `https://www.facebook.com/watch/?v=${video.id}`,
-      directVideoUrl: video.source || "",
-      liveStatus: video.source?.includes(".m3u8") ? "live" : "",
-      featured: index === 0,
-    }));
+    const sermons = videos
+      .map((video, index) => ({
+        id: video.id,
+        title: pickSermonTitle(video, index),
+        speaker: "EL Bethel Global Harvest Church",
+        date: video.created_time ? formatSermonDate(video.created_time) : defaultSermons[0].date,
+        duration: pickSermonDuration(video.length),
+        series: "Facebook Sermons",
+        description: stripHtml(video.description || defaultSermons[0].description),
+        thumbnail: pickSermonThumbnail(video),
+        videoUrl: `https://www.facebook.com/watch/?v=${video.id}`,
+        directVideoUrl: video.source || "",
+        liveStatus: video.source?.includes(".m3u8") ? "live" : "",
+        featured: false,
+      }))
+      .filter((sermon) => isLongFormSermon(sermon.duration))
+      .map((sermon, index) => ({
+        ...sermon,
+        featured: index === 0,
+      }));
+
+    return sermons.length > 0 ? sermons : null;
   } catch (error) {
     console.warn(
       "Facebook sermon fetch failed:",
@@ -396,14 +429,22 @@ export async function getSermons() {
       return defaultSermons;
     }
 
-    return sermons.map((sermon, index) => ({
-      ...defaultSermons[Math.min(index, defaultSermons.length - 1)],
-      ...sermon,
-      id: sermon.id || `${index + 1}`,
-      date: sermon.date ? formatSermonDate(sermon.date) : defaultSermons[0].date,
-      thumbnail: sermon.thumbnail || defaultSermons[0].thumbnail,
-      featured: Boolean(sermon.featured),
-    }));
+    const normalizedSermons = sermons
+      .map((sermon, index) => ({
+        ...defaultSermons[Math.min(index, defaultSermons.length - 1)],
+        ...sermon,
+        id: sermon.id || `${index + 1}`,
+        date: sermon.date ? formatSermonDate(sermon.date) : defaultSermons[0].date,
+        thumbnail: sermon.thumbnail || defaultSermons[0].thumbnail,
+        featured: false,
+      }))
+      .filter((sermon) => isLongFormSermon(sermon.duration))
+      .map((sermon, index) => ({
+        ...sermon,
+        featured: index === 0 ? true : Boolean(sermon.featured),
+      }));
+
+    return normalizedSermons.length > 0 ? normalizedSermons : defaultSermons;
   } catch {
     return defaultSermons;
   }

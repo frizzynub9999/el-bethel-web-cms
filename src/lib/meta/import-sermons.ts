@@ -59,6 +59,8 @@ type MetaPostResponse = {
   };
 };
 
+const MIN_SERMON_DURATION_MINUTES = 20;
+
 function stripHtml(value: string) {
   return value.replace(/<[^>]+>/g, "").trim();
 }
@@ -101,6 +103,14 @@ function pickDuration(seconds: number | undefined) {
 
   const minutes = Math.max(1, Math.round(seconds / 60));
   return `${minutes} min`;
+}
+
+function isLongFormVideo(seconds: number | undefined) {
+  if (!seconds || seconds <= 0) {
+    return false;
+  }
+
+  return seconds / 60 >= MIN_SERMON_DURATION_MINUTES;
 }
 
 async function fetchPageVideos() {
@@ -198,7 +208,9 @@ export async function importFacebookSermons() {
 
   const transaction = writeClient.transaction();
 
-  videos.forEach((video, index) => {
+  const longFormVideos = videos.filter((video) => isLongFormVideo(video.length));
+
+  longFormVideos.forEach((video, index) => {
     const publishedAt = pickDate(video.created_time);
     const title = pickTitle(video, index);
 
@@ -224,7 +236,7 @@ export async function importFacebookSermons() {
   await transaction.commit();
 
   return {
-    imported: videos.length,
-    ids: videos.map((video) => video.id),
+    imported: longFormVideos.length,
+    ids: longFormVideos.map((video) => video.id),
   };
 }
