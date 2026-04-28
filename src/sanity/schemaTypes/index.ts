@@ -5,6 +5,7 @@ import { givePageType } from "./givePage";
 import { homePageType } from "./homePage";
 import { sermonType } from "./sermon";
 import { siteSettingsType } from "./siteSettings";
+import { pushSubscriberType } from "./pushSubscriber";
 import { subscriberType } from "./subscriber";
 
 export const schemaTypes = [
@@ -16,4 +17,5 @@ export const schemaTypes = [
   sermonType,
   eventType,
   subscriberType,
+  pushSubscriberType,
 ];

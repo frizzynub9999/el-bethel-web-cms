@@ -13,6 +13,10 @@ type SubscriberRecord = {
   email: string;
 };
 
+type PushSubscriberRecord = {
+  token: string;
+};
+
 type AnnouncementRecord = {
   _id: string;
   _type: "announcement";
@@ -122,6 +126,44 @@ async function sendEmail({
   }
 }
 
+async function sendPushNotifications({
+  tokens,
+  title,
+  body,
+  data,
+}: {
+  tokens: string[];
+  title: string;
+  body: string;
+  data: Record<string, string>;
+}) {
+  if (tokens.length === 0) {
+    return;
+  }
+
+  const messages = tokens.map((token) => ({
+    to: token,
+    sound: "default",
+    title,
+    body,
+    data,
+  }));
+
+  const response = await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(messages),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Expo push failed: ${errorText}`);
+  }
+}
+
 function buildAnnouncementEmail(announcement: AnnouncementRecord, baseUrl: string) {
   return {
     subject: `New Announcement: ${announcement.title}`,
@@ -187,6 +229,18 @@ async function getSubscribers(type: "announcement" | "event") {
   );
 }
 
+async function getPushSubscribers(type: "announcement" | "event") {
+  if (!client) {
+    throw new Error("Sanity client is not configured.");
+  }
+
+  const field = type === "announcement" ? "announcements" : "events";
+
+  return client.fetch<PushSubscriberRecord[]>(
+    `*[_type == "pushSubscriber" && isActive == true && ${field} == true]{ token }`
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const expectedSecret = process.env.SANITY_WEBHOOK_SECRET?.trim();
@@ -234,11 +288,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Notification not requested or already sent." });
     }
 
-    const subscribers = await getSubscribers(type);
+    const [subscribers, pushSubscribers] = await Promise.all([
+      getSubscribers(type),
+      getPushSubscribers(type),
+    ]);
 
-    if (subscribers.length === 0) {
+    if (subscribers.length === 0 && pushSubscribers.length === 0) {
       await markNotificationSent(id);
-      return NextResponse.json({ message: "No subscribers found. Document marked as sent." });
+      return NextResponse.json({
+        message: "No email or push subscribers found. Document marked as sent.",
+      });
     }
 
     const baseUrl = getBaseUrl(request);
@@ -246,6 +305,15 @@ export async function POST(request: NextRequest) {
       type === "announcement"
         ? buildAnnouncementEmail(document as AnnouncementRecord, baseUrl)
         : buildEventEmail(document as EventRecord, baseUrl);
+
+    const pushTitle =
+      type === "announcement"
+        ? `New Announcement: ${document.title}`
+        : `New Event: ${document.title}`;
+    const pushBody =
+      type === "announcement"
+        ? (document as AnnouncementRecord).body
+        : `${formatEventDate((document as EventRecord).eventDate)}${(document as EventRecord).time ? ` at ${(document as EventRecord).time}` : ""}`;
 
     for (const subscriber of subscribers) {
       await sendEmail({
@@ -256,11 +324,23 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    await sendPushNotifications({
+      tokens: pushSubscribers.map((subscriber) => subscriber.token),
+      title: pushTitle,
+      body: pushBody,
+      data: {
+        screen: "events",
+        path: "/events",
+        type,
+        id,
+      },
+    });
+
     await markNotificationSent(id);
 
     return NextResponse.json({
       success: true,
-      message: `Notification sent to ${subscribers.length} subscriber(s).`,
+      message: `Notification sent to ${subscribers.length} email subscriber(s) and ${pushSubscribers.length} push subscriber(s).`,
     });
   } catch (error) {
     return NextResponse.json(
