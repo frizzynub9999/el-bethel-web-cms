@@ -162,67 +162,131 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row overflow-hidden rounded-[40px] shadow-2xl min-h-[550px]">
-            <Link
-              href="/sermons"
-              className="relative w-full md:w-1/2 group cursor-pointer overflow-hidden"
-              aria-label="View sermons"
-            >
-              <img
-                src={data.latestSermon.thumbnail}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                alt="Sermon Thumbnail"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300">
+          {data.latestSermon ? (
+            <div className="flex flex-col md:flex-row overflow-hidden rounded-[40px] shadow-2xl min-h-[550px]">
+              <Link
+                href="/sermons"
+                className="relative w-full md:w-1/2 group cursor-pointer overflow-hidden"
+                aria-label="View sermons"
+              >
+                <img
+                  src={data.latestSermon.thumbnail}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Sermon Thumbnail"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      className="w-8 h-8 text-[#8B19E6] fill-current ml-1"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
+              <div className="w-full md:w-1/2 bg-[#8B19E6] p-12 md:p-20 flex flex-col justify-center text-white">
+                <span className="text-xs font-bold uppercase tracking-[0.25em] text-white/70 mb-6">
+                  Latest Message
+                </span>
+                <h3 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tighter">
+                  {data.latestSermon.title}
+                </h3>
+                <p className="text-white/80 text-lg mb-10 leading-relaxed max-w-md">
+                  {data.latestSermon.description}
+                </p>
+                <div className="mb-12">
+                  <p className="font-bold text-xl text-white">
+                    {data.latestSermon.speaker}
+                  </p>
+                  <p className="text-white/50 text-sm mt-1">
+                    {data.latestSermon.date} {" • "} {data.latestSermon.duration}
+                  </p>
+                </div>
+                <a
+                  href="/sermons"
+                  className="group/link flex items-center gap-3 font-bold text-lg w-fit"
+                >
+                  <span>View All Sermons</span>
                   <svg
-                    className="w-8 h-8 text-[#8B19E6] fill-current ml-1"
+                    className="w-6 h-6 transform group-hover/link:translate-x-2 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path d="M8 5v14l11-7z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2.5"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
                   </svg>
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="mx-auto max-w-3xl rounded-[32px] border border-gray-100 bg-gray-50 px-8 py-14 text-center shadow-sm">
+              <h3 className="text-3xl font-black text-[#0A1F44]">
+                No Latest Videos
+              </h3>
+              <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-7 text-gray-500">
+                Catch up again soon for the latest message.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F7F2FF_0%,#FFFFFF_100%)] py-24">
+        <div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(139,25,230,0.14)_0%,rgba(139,25,230,0)_100%)]" />
+        <div className="absolute left-0 top-10 h-40 w-40 rounded-br-[80px] border border-[#EAD7FF] bg-white/70" />
+        <div className="absolute right-0 bottom-12 h-48 w-48 rounded-tl-[96px] border border-[#EAD7FF] bg-[#FBF7FF]/85" />
+
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="mb-16 text-center">
+            <p className="mb-4 text-xs font-black uppercase tracking-[0.3em] text-[#8B19E6]">
+              Life Together
+            </p>
+            <h2 className="mb-3 text-4xl font-extrabold tracking-tight text-[#0A1F44]">
+              Our Ministries
+            </h2>
+            <p className="text-lg font-medium text-gray-500">
+              Find your place to serve and grow
+            </p>
+            <div className="mx-auto mt-6 h-1.5 w-24 rounded-full bg-[#E9D5FF]">
+              <div className="h-full w-12 rounded-full bg-[#8B19E6]" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {data.ministries.map((item, i) => (
+              <div
+                key={i}
+                className="group relative min-h-[360px] overflow-hidden rounded-[32px] border border-white/70 shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(139,25,230,0.16)]"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,31,68,0.08)_0%,rgba(10,31,68,0.18)_38%,rgba(10,31,68,0.88)_100%)]" />
+                <div className="absolute inset-x-5 top-5 h-px bg-white/45" />
+                <div className="relative flex h-full flex-col justify-end">
+                  <div className="px-7 pb-7 pt-24 text-left text-white">
+                    <h3 className="text-2xl font-black tracking-tight">
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm font-medium leading-6 text-white/85 transition-opacity duration-300 group-hover:opacity-0">
+                      <span className="block truncate">{item.desc}</span>
+                    </p>
+                    <p className="mt-3 max-h-0 overflow-hidden text-sm font-medium leading-6 text-white/85 opacity-0 transition-all duration-300 group-hover:max-h-40 group-hover:opacity-100">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </Link>
-
-            <div className="w-full md:w-1/2 bg-[#8B19E6] p-12 md:p-20 flex flex-col justify-center text-white">
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-white/70 mb-6">
-                Latest Message
-              </span>
-              <h3 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tighter">
-                {data.latestSermon.title}
-              </h3>
-              <p className="text-white/80 text-lg mb-10 leading-relaxed max-w-md">
-                {data.latestSermon.description}
-              </p>
-              <div className="mb-12">
-                <p className="font-bold text-xl text-white">
-                  {data.latestSermon.speaker}
-                </p>
-                <p className="text-white/50 text-sm mt-1">
-                  {data.latestSermon.date} {" • "} {data.latestSermon.duration}
-                </p>
-              </div>
-              <a
-                href="/sermons"
-                className="group/link flex items-center gap-3 font-bold text-lg w-fit"
-              >
-                <span>View All Sermons</span>
-                <svg
-                  className="w-6 h-6 transform group-hover/link:translate-x-2 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </a>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -337,46 +401,6 @@ export default async function Home() {
             <UpdatesSubscribeCard />
           </>
         )}
-      </section>
-
-      <section className="py-24 bg-white px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-[#0A1F44] text-4xl font-extrabold mb-3 tracking-tight">
-            Our Ministries
-          </h2>
-          <p className="text-gray-500 font-medium text-lg">
-            Find your place to serve and grow
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {data.ministries.map((item, i) => (
-            <div
-              key={i}
-              className="group relative min-h-[360px] overflow-hidden rounded-[32px] border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
-              <div className="relative flex h-full flex-col justify-end">
-                <div className="rounded-t-[28px] bg-gradient-to-t from-black/85 via-black/70 to-transparent px-7 pb-7 pt-20 text-left text-white">
-                  <h3 className="text-2xl font-black tracking-tight">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-sm font-medium leading-6 text-white/85 transition-opacity duration-300 group-hover:opacity-0">
-                    <span className="block truncate">{item.desc}</span>
-                  </p>
-                  <p className="mt-3 max-h-0 overflow-hidden text-sm font-medium leading-6 text-white/85 opacity-0 transition-all duration-300 group-hover:max-h-40 group-hover:opacity-100">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="bg-[#8B19E6] py-20 text-center text-white w-full">

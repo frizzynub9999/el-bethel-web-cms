@@ -413,20 +413,21 @@ async function getFacebookSermons() {
   }
 }
 
-export async function getSermons() {
+export async function getSermons(options?: { fallbackToDefaults?: boolean }) {
+  const fallbackToDefaults = options?.fallbackToDefaults ?? true;
   const facebookSermons = await getFacebookSermons();
   if (facebookSermons) {
     return facebookSermons;
   }
 
   if (!client) {
-    return defaultSermons;
+    return fallbackToDefaults ? defaultSermons : [];
   }
 
   try {
     const sermons = await client.fetch<Array<Partial<SermonItem>>>(sermonsQuery);
     if (!sermons.length) {
-      return defaultSermons;
+      return fallbackToDefaults ? defaultSermons : [];
     }
 
     const normalizedSermons = sermons
@@ -444,9 +445,9 @@ export async function getSermons() {
         featured: index === 0 ? true : Boolean(sermon.featured),
       }));
 
-    return normalizedSermons.length > 0 ? normalizedSermons : defaultSermons;
+    return normalizedSermons.length > 0 ? normalizedSermons : fallbackToDefaults ? defaultSermons : [];
   } catch {
-    return defaultSermons;
+    return fallbackToDefaults ? defaultSermons : [];
   }
 }
 
@@ -509,9 +510,9 @@ export async function getEventById(id: string) {
   return events.find((event) => event.id === id) || null;
 }
 
-export async function getLatestSermon() {
-  const sermons = await getSermons();
-  return sermons.find((sermon) => sermon.featured) || sermons[0];
+export async function getLatestSermon(options?: { fallbackToDefaults?: boolean }) {
+  const sermons = await getSermons(options);
+  return sermons.find((sermon) => sermon.featured) || sermons[0] || null;
 }
 
 export async function getHomepageEvents(limit = 3) {

@@ -26,7 +26,7 @@ export type HomePageData = {
   address: string;
   announcements: AnnouncementItem[];
   weeklySchedule: WeeklyScheduleItem[];
-  latestSermon: SermonItem;
+  latestSermon: SermonItem | null;
   events: Array<{
     id: string;
     title: string;
@@ -150,7 +150,7 @@ export async function getHomePageData() {
   try {
     const [data, latestSermon, events, announcements, settings] = await Promise.all([
       client.fetch<Partial<HomePageData> | null>(homePageQuery),
-      getLatestSermon(),
+      getLatestSermon({ fallbackToDefaults: false }),
       getHomepageEvents(),
       getAnnouncements(),
       getSiteSettings(),

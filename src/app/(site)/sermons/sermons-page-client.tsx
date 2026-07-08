@@ -94,6 +94,7 @@ export default function SermonsPageClient({ sermons }: SermonsPageClientProps) {
   const [mainPlayerActive, setMainPlayerActive] = useState(false);
 
   const featuredSermon = sermons.find((sermon) => sermon.featured) || sermons[0];
+  const hasSermons = sermons.length > 0;
 
   const series = useMemo(
     () => ["All Series", ...Array.from(new Set(sermons.map((sermon) => sermon.series).filter(Boolean)))],
@@ -221,50 +222,63 @@ export default function SermonsPageClient({ sermons }: SermonsPageClientProps) {
 
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <div>
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight uppercase italic">
-                Message Archive
-              </h2>
-              <p className="text-gray-500 font-medium mt-2 uppercase text-xs tracking-widest">
-                Browse our collection of past sermons
-              </p>
-            </div>
+          {hasSermons ? (
+            <>
+              <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                <div>
+                  <h2 className="text-4xl font-black text-gray-900 tracking-tight uppercase italic">
+                    Message Archive
+                  </h2>
+                  <p className="text-gray-500 font-medium mt-2 uppercase text-xs tracking-widest">
+                    Browse our collection of past sermons
+                  </p>
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <div className="relative">
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Search title..."
-                  className="pl-12 pr-4 py-3 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-[#8B19E6] outline-none w-full sm:w-64"
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  value={searchTerm}
-                />
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                  <div className="relative">
+                    <Search
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={20}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Search title..."
+                      className="pl-12 pr-4 py-3 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-[#8B19E6] outline-none w-full sm:w-64"
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      value={searchTerm}
+                    />
+                  </div>
+
+                  <select
+                    className="px-4 py-3 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-[#8B19E6] outline-none bg-white font-bold text-gray-700"
+                    onChange={(e) => setSelectedSeries(e.target.value)}
+                    value={selectedSeries}
+                  >
+                    {series.map((s) => (
+                      <option key={s} value={s === "All Series" ? "all" : s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <select
-                className="px-4 py-3 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-[#8B19E6] outline-none bg-white font-bold text-gray-700"
-                onChange={(e) => setSelectedSeries(e.target.value)}
-                value={selectedSeries}
-              >
-                {series.map((s) => (
-                  <option key={s} value={s === "All Series" ? "all" : s}>
-                    {s}
-                  </option>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {filteredSermons.map((sermon) => (
+                  <SermonCard key={sermon.id} sermon={sermon} />
                 ))}
-              </select>
+              </div>
+            </>
+          ) : (
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight uppercase italic mb-4">
+                No Recent Sermons Yet
+              </h2>
+              <p className="text-gray-500 text-lg font-medium">
+                Check back soon for new sermon uploads from Facebook.
+              </p>
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {filteredSermons.map((sermon) => (
-              <SermonCard key={sermon.id} sermon={sermon} />
-            ))}
-          </div>
+          )}
         </div>
       </section>
 
